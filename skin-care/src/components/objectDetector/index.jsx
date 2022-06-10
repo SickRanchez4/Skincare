@@ -50,11 +50,21 @@ const SelectButton = styled.button`
 `;
 
 export function ObjectDetector(props) {
+    const fileInputRef = useRef();
+
+    const openFilePicker = () => {
+        if(fileInputRef.current) fileInputRef.current.click();
+    }
+
+    const onSelectImage = () => {
+        const file = e.target.files[0];
+    }
 
     return (
         <ObjectDetectorContainer>
             <DetectorContainer>Img</DetectorContainer>
-            <SelectButton>Select Image</SelectButton>
+            <HiddenFileInput type="file" ref={fileInputRef} onChange={onSelectImage} />
+            <SelectButton onClick={openFilePicker}>Select Image</SelectButton>
         </ObjectDetectorContainer>
     );
 }
