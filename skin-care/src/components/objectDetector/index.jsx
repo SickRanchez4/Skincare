@@ -62,8 +62,7 @@ const TargetBox = styled.div`
     z-index: 20;
 
     &::before {
-        content: "${({ classType, score }) => 
-        `${classType} ${score.toFixed(2)}`}";
+        content: "${({ classType, score }) => `${classType} ${score.toFixed(2)}`}";
         color: lime;
         font-weight: 500;
         font-size: 17px;
@@ -75,8 +74,10 @@ const TargetBox = styled.div`
 
 export function ObjectDetector(props) {
     const fileInputRef = useRef();
+    const imageRef = useRef();
     const [imgData, setImgData] = useState(null);
     const [predictions, setPredictions] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
     const isEmptypredictions = !predictions || predictions.length === 0;
 
@@ -84,10 +85,32 @@ export function ObjectDetector(props) {
         if (fileInputRef.current) fileInputRef.current.click();
     };
 
-    const detectObjectsOnImage = async (imageElement) => {
+    const normalizePredictions = (predictions, imgSize) => {
+        if (!predictions || !imgSize || !imageRef) return predictions || [];
+        return predictions.map((prediction) => {
+            const { bbox } = prediction;
+            const oldX = bbox[0];
+            const oldY = bbox[1];
+            const oldWidth = bbox[2];
+            const oldHeight = bbox[3];
+
+            const imgWidth = imageRef.current.widt;
+            const imgHeight = imageRef.current.height;
+
+            const x = (oldX * imgWidth) / imgSize.width;
+            const y = (oldY * imgHeight) / imgSize.height;
+            const width = (oldWidth * imgWidth) / imgSize.width;
+            const height = (oldHeight * imgHeight) / imgSize.height;
+
+            return {...predictions, bbox: [x, y, width, height] };
+        });
+    };
+
+    const detectObjectsOnImage = async (imageElement, imgSize) => {
         const model = await cocoSsd.load({ });
         const predictions = await model.detect(imageElement, 6);
-        setPredictions(predictions);
+        const normalizedPredictions = normalizePredictions(predictions, imgSize)
+        setPredictions(normalizedPredictions);
         console.log("Predictions: ", predictions);
     };
 
@@ -97,10 +120,13 @@ export function ObjectDetector(props) {
             fileReader.onload = () => rs(fileReader.result);
             fileReader.onerror = () => rj(fileReader.error);
             fileReader.readAsDataURL(file);
-        })
+        });
     };
 
     const onSelectImage = async (e) => {
+        setPredictions([]);
+        setLoading(true);
+
         const file = e.target.files[0];
         const imgData = await readImage(file);
         setImgData(imgData);
@@ -109,16 +135,21 @@ export function ObjectDetector(props) {
         imageElement.src = imgData;
 
         imageElement.onload = async () => {
-            await detectObjectsOnImage(imageElement);
+            const imgSize = { 
+                width: imageElement.widt, 
+                height: imageElement.height,
+             };
+            await detectObjectsOnImage(imageElement, imgSize);
+            setLoading(false);
         };
-
     };
 
     return (
         <ObjectDetectorContainer>
             <DetectorContainer>
-                {imgData && <TargetImg src={imgData} />}
-                {!isEmptypredictions && predictions.map((predictions, idx) => (
+                {imgData && <TargetImg src={imgData} ref={imageRef} />}
+                {!isEmptypredictions && 
+                    predictions.map((predictions, idx) => (
                     <TargetBox 
                     key={idx} 
                     x={predictions.bbox[0]} 
@@ -126,12 +157,18 @@ export function ObjectDetector(props) {
                     width={predictions.bbox[2]} 
                     height={predictions.bbox[3]}
                     classType={predictions.class}
-                    score={predictions.score}
+                    score={predictions.score * 100}
                     />
                 ))}
             </DetectorContainer>
-            <HiddenFileInput type="file" ref={fileInputRef} onChange={onSelectImage} />
-            <SelectButton onClick={openFilePicker}>Select Image</SelectButton>
+            <HiddenFileInput 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={onSelectImage} 
+            />
+            <SelectButton onClick={openFilePicker}>
+                {isLoading ? "Recognizing..." : "Select Image"}
+            </SelectButton>
         </ObjectDetectorContainer>
     );
 }
