@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 
 import "@tensorflow/tfjs-backend-cpu";
-import "@tensorflow/tfjs-backend-webgl";
+//import "@tensorflow/tfjs-backend-webgl";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
 const ObjectDetectorContainer = styled.div`
@@ -62,7 +62,7 @@ const TargetBox = styled.div`
     z-index: 20;
 
     &::before {
-        content: "${({ classType, score }) => `${classType} ${score.toFixed(2)}`}";
+        content: "${({ classType, score }) => `${classType} ${score.toFixed(1)}%`}";
         color: lime;
         font-weight: 500;
         font-size: 17px;
@@ -94,7 +94,7 @@ export function ObjectDetector(props) {
             const oldWidth = bbox[2];
             const oldHeight = bbox[3];
 
-            const imgWidth = imageRef.current.widt;
+            const imgWidth = imageRef.current.width;
             const imgHeight = imageRef.current.height;
 
             const x = (oldX * imgWidth) / imgSize.width;
@@ -109,7 +109,7 @@ export function ObjectDetector(props) {
     const detectObjectsOnImage = async (imageElement, imgSize) => {
         const model = await cocoSsd.load({ });
         const predictions = await model.detect(imageElement, 6);
-        const normalizedPredictions = normalizePredictions(predictions, imgSize)
+        const normalizedPredictions = normalizePredictions(predictions, imgSize);
         setPredictions(normalizedPredictions);
         console.log("Predictions: ", predictions);
     };
@@ -136,8 +136,8 @@ export function ObjectDetector(props) {
 
         imageElement.onload = async () => {
             const imgSize = { 
-                width: imageElement.widt, 
-                height: imageElement.height,
+                width: imageElement.width, 
+                height: imageElement.height
              };
             await detectObjectsOnImage(imageElement, imgSize);
             setLoading(false);
