@@ -8285,6 +8285,11 @@ tempy@^0.6.0:
     type-fest "^0.16.0"
     unique-string "^2.0.0"
 
+tensorflow-models@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/tensorflow-models/-/tensorflow-models-0.0.1.tgz#9a0a1bd06c4e91b58332b8b1dc8b04cc476ede12"
+  integrity sha512-ze61MpdblYag2nldtnBpFwspH312yXvO9qB5i3006YHKzO9xABUHPlmRcIOnUsKIEqXf3qfXeuNAvccYJuvoxA==
+
 terminal-link@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/terminal-link/-/terminal-link-2.1.1.tgz#14a64a27ab3c0df933ea546fba55f2d078edc994"
