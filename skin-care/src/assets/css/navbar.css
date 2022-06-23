@@ -1,0 +1,9 @@
+logouta.nav-link.active {
+    color: #0E1333;
+    border-bottom: solid 2.5px #0E1333;
+    padding-bottom: 2.5em;
+}
+
+logouta.nav-link.active:hover {
+    color: white
+}

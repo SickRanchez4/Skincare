@@ -5,6 +5,16 @@ import "@tensorflow/tfjs-backend-cpu";
 //import "@tensorflow/tfjs-backend-webgl";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
+
+const DivContainer = styled.div`
+  width: 100%;
+  height: 120vh;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #050;
+`;
 const ObjectDetectorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -141,6 +151,7 @@ export function ObjectDetector(props) {
   };
 
   return (
+    <DivContainer>
     <ObjectDetectorContainer>
       <DetectorContainer>
         {imgData && <TargetImg src={imgData} ref={imageRef} />}
@@ -166,5 +177,6 @@ export function ObjectDetector(props) {
         {isLoading ? "Recognizing..." : "Select Image"}
       </SelectButton>
     </ObjectDetectorContainer>
+    </DivContainer>
   );
 }
