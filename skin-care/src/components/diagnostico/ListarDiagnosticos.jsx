@@ -25,9 +25,7 @@ import * as DiagnosticoServer from './DiagnosticoServer'
 
   return (
     <div className="row">  
-        {diagnosticos.map((diagnostico) =>(
-        <DiagnosticoItem key={diagnostico.id} diagnostico={diagnostico}/>
-    ))}
+      <h1>Listando todos los Diagnosticos que se ha realizado</h1>
     </div>
   )
 };

@@ -3,6 +3,7 @@ import * as TokenAuth from "../../routes/auth";
 export default function DashPaciente() {
     const navigate = useNavigate();
     const token = TokenAuth.getToken();
+    const nombre = TokenAuth.getNombre();
     console.log(token);
     const handleClick = ()=>{
         TokenAuth.clearToken();
@@ -10,8 +11,7 @@ export default function DashPaciente() {
     }
     return (
         <div>
-            <h1>Dash paciente papu!!</h1>
-            <button onClick={handleClick}>Logout</button>
+            <h1>Bienvenido a su Dash paciente {nombre}!!</h1>
 
             
         </div>
